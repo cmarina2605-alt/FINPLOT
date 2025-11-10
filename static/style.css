@@ -1,0 +1,132 @@
+/* Reset and base styles */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f5f7fa;
+    color: #333;
+}
+
+/* Center container */
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Header styling */
+header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+header h1 {
+    color: #1a5fb4;
+    font-size: 2.5em;
+}
+header p {
+    color: #666;
+}
+
+/* Top controls bar */
+.controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.ingest {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+#ingestBtn {
+    padding: 10px 20px;
+    background: #1a5fb4;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+#ingestBtn:hover {
+    background: #0d47a1;
+}
+
+/* Model dropdown */
+#modelSelect {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1em;
+}
+
+/* Chat area */
+.chat {
+    height: 60vh;
+    overflow-y: auto;
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Individual messages */
+.message {
+    margin: 15px 0;
+    padding: 12px 18px;
+    border-radius: 18px;
+    max-width: 80%;
+    line-height: 1.5;
+}
+.user {
+    background: #1a5fb4;
+    color: white;
+    align-self: flex-end;
+    margin-left: auto;
+}
+.bot {
+    background: #e9ecef;
+    color: #333;
+}
+
+/* Source citations */
+.citation {
+    font-size: 0.8em;
+    color: #666;
+    margin-top: 8px;
+    font-style: italic;
+}
+
+/* Input area at the bottom */
+.input-area {
+    display: flex;
+    gap: 10px;
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+#questionInput {
+    flex: 1;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    resize: none;
+    font-size: 1em;
+    font-family: inherit;
+}
+#sendBtn {
+    padding: 15px 30px;
+    background: #1a5fb4;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: bold;
+}
+#sendBtn:hover {
+    background: #0d47a1;
+}

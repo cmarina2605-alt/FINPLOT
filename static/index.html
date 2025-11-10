@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinPilot AI</title>
+    <!-- Main stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h1>FinPilot AI</h1>
+            <p>RAG + Ollama for your financial documents</p>
+        </header>
+
+        <!-- Controls: PDF upload + model selector -->
+        <div class="controls">
+            <div class="ingest">
+                <input type="file" id="pdfInput" multiple accept=".pdf" />
+                <button id="ingestBtn">Load PDFs</button>
+                <span id="ingestStatus"></span>
+            </div>
+
+            <!-- Model selector – values match Ollama tags -->
+            <select id="modelSelect">
+                <option value="gemma:2b">gemma:2b (fast)</option>
+                <option value="llama3:8b">llama3:8b (better)</option>
+                <option value="phi3">phi3 (small)</option>
+                <option value="mistral">mistral</option>
+                <!-- Add more models here if you pull them with `ollama pull` -->
+            </select>
+        </div>
+
+        <!-- Chat window -->
+        <div id="chat" class="chat"></div>
+
+        <!-- Input area -->
+        <div class="input-area">
+            <textarea id="questionInput" placeholder="Ask a question about the documents..."></textarea>
+            <button id="sendBtn">Send</button>
+        </div>
+    </div>
+
+    <!-- Main script -->
+    <script src="script.js"></script>
+</body>
+</html>
