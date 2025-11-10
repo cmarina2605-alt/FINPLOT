@@ -115,12 +115,6 @@ async def ingest_file(file: UploadFile = File(...)):
 @app.post("/ask")
 def ask(req: AskRequest) -> Dict[str, Any]:
     """Answer a question using RAG – model can be overridden per request"""
-    original_model = os.getenv("OLLAMA_MODEL")
-
-    # Temporarily override model if a different one is requested
-    if req.model:
-        os.environ["OLLAMA_MODEL"] = req.model
-
     where_filter = {"source": req.source} if req.source else None
 
     try:
@@ -128,14 +122,12 @@ def ask(req: AskRequest) -> Dict[str, Any]:
             question=req.question,
             k=req.k,
             where=where_filter,
+            model=req.model or os.getenv("OLLAMA_MODEL", "gemma2:2b")
         )
         return response
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Query failed: {str(e)}")
-    finally:
-        # Always restore the original model (safe with --reload and concurrent requests)
-        if req.model and original_model:
-            os.environ["OLLAMA_MODEL"] = original_model
+
 
 
 # ---------- Serve static frontend (no templates needed) ----------

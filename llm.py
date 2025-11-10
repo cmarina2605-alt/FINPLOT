@@ -36,14 +36,31 @@ def build_prompt(question: str, context: str) -> str:
         max_context_chars=MAX_CONTEXT_CHARS,
     )
 
-
+def ensure_model_downloaded(model: str):
+    """Checks if the model exists locally in Ollama, pulls it if missing."""
+    # Ollama endpoint para ver modelos locales
+    resp = requests.get("http://localhost:11434/api/models")
+    if resp.ok:
+        local_models = [m["name"] for m in resp.json()]
+        if model not in local_models:
+            print(f"[INFO] Model '{model}' not found locally, pulling...")
+            pull_resp = requests.post("http://localhost:11434/api/pull", json={"model": model})
+            if pull_resp.ok:
+                print(f"[OK] Model '{model}' downloaded successfully")
+            else:
+                print(f"[ERROR] Failed to pull model '{model}': {pull_resp.text}")
+    else:
+        print(f"[ERROR] Failed to list Ollama models: {resp.text}")
 # ------------------------------------------------------------
 # Low-level Ollama call (non-streaming for simplicity)
 # ------------------------------------------------------------
+import subprocess
+import requests
+
 def generate_with_ollama(prompt: str, model: str = MODEL_NAME) -> str:
     """
-    Calls Ollama's /api/generate endpoint and returns the model output.
-    Includes debug prints to show progress and errors.
+    Llama al endpoint de Ollama y devuelve la respuesta.
+    Si el modelo no está descargado, lo descarga automáticamente.
     """
     payload = {
         "model": model,
@@ -52,19 +69,30 @@ def generate_with_ollama(prompt: str, model: str = MODEL_NAME) -> str:
         "options": {
             "temperature": TEMPERATURE,
             "num_ctx": NUM_CTX,
-            "num_gpu": NUM_GPU,  # harmless if Ollama ignores it on your setup
+            "num_gpu": NUM_GPU,
         },
     }
+
     try:
-        print(f"[DEBUG] Calling Ollama on {OLLAMA_API_URL} with model={model}...")
+        print(f"[DEBUG] Calling Ollama with model={model}...")
         resp = requests.post(OLLAMA_API_URL, json=payload, timeout=120)
-        print(f"[DEBUG] Ollama response status: {resp.status_code}")
-        if not resp.ok:
-            print("[DEBUG] Full response text:", resp.text)
+
+        if resp.status_code == 404:
+            # Modelo no encontrado, intentamos descargarlo
+            print(f"[WARNING] Model '{model}' not found. Pulling it...")
+            subprocess.run(["ollama", "pull", model], check=True)
+            print(f"[INFO] Model '{model}' downloaded. Retrying request...")
+            # Reintento
+            resp = requests.post(OLLAMA_API_URL, json=payload, timeout=120)
+
         resp.raise_for_status()
         data = resp.json()
-        print("[DEBUG] Ollama returned keys:", list(data.keys()))
         return (data.get("response") or "").strip()
+
+    except subprocess.CalledProcessError as e:
+        print(f"[ERROR] Failed to pull model '{model}': {e}")
+        return f"ERROR pulling model '{model}': {e}"
+
     except Exception as e:
         print(f"[ERROR] Failed to call Ollama: {e}")
         return f"ERROR calling Ollama: {e}"
@@ -76,6 +104,7 @@ def generate_with_ollama(prompt: str, model: str = MODEL_NAME) -> str:
 def answer(question: str, context: str, model: str = MODEL_NAME) -> str:
     prompt = build_prompt(question, context)
     return generate_with_ollama(prompt, model=model)
+
 
 
 # ------------------------------------------------------------
@@ -100,7 +129,11 @@ def answer_from_rag(
     text = answer(question, context, model=model)
 
     citations: List[Dict[str, Any]] = [
-        {"source": r["source"], "page": r["page"], "chunk": r["chunk"]}
+        {
+            "source": r["source"],
+            "page": r.get("page"),  # puede ser None
+            "chunk": r.get("chunk"),
+        }
         for r in search.get("results", [])
     ]
     return {"answer": text, "citations": citations, "context": context}
@@ -122,4 +155,3 @@ if __name__ == "__main__":
             print(f"- {c['source']} p.{c['page']} c.{c['chunk']}")
     else:
         print("Usage:\n  python llm.py \"your question here\"")
-
