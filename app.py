@@ -69,7 +69,7 @@ def health() -> Dict[str, Any]:
         "status": "ok",
         "chroma_persist_dir": os.getenv("CHROMA_PERSIST_DIR", "chroma_db"),
         "chroma_collection": os.getenv("CHROMA_COLLECTION", "finpilot_documents"),
-        "ollama_model": os.getenv("OLLAMA_MODEL", "gemma2:9b"),
+        "ollama_model": os.getenv("OLLAMA_MODEL", "gemma2:2b"),
     }
 
 

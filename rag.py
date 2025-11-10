@@ -15,7 +15,6 @@ import os
 import re
 import uuid
 from typing import List, Dict, Any, Optional, Union
-
 import fitz  # PyMuPDF → used to extract text from PDFs
 import chromadb  # our vector database
 from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction

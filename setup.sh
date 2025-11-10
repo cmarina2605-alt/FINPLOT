@@ -17,7 +17,7 @@ pip install --upgrade pip
 # 4. Instalar dependencias
 echo "Instalando dependencias..."
 pip install --force-reinstall -r requirements.txt
-
+pip install --force-reinstall numpy==1.26.4
 # 5. Finalizado
 echo ""
 echo "¡INSTALACIÓN COMPLETA!"

@@ -14,7 +14,7 @@ import prompts  # centralized system prompt + builder
 
 # ---- Config ----
 OLLAMA_API_URL = os.getenv("OLLAMA_API_URL", "http://localhost:11434/api/generate")
-MODEL_NAME = os.getenv("OLLAMA_MODEL", "gemma2:9b")
+MODEL_NAME = os.getenv("OLLAMA_MODEL", "gemma2:2b")
 
 # Safety caps to avoid sending giant prompts
 MAX_CONTEXT_CHARS = int(os.getenv("MAX_CONTEXT_CHARS", "12000"))
