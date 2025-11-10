@@ -15,6 +15,7 @@ import os
 import re
 import uuid
 from typing import List, Dict, Any, Optional, Union
+
 import fitz  # PyMuPDF → used to extract text from PDFs
 import chromadb  # our vector database
 from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
@@ -205,12 +206,17 @@ def query(question: str, k: int = 4, where: Optional[Dict[str, Any]] = None) -> 
 
 def build_context(results: Dict[str, Any]) -> str:
     """
-    Combines the retrieved text chunks into a single context block.
-    This is what we'll send to the LLM (Gemma) to answer the question.
+    Combina los chunks de texto en un bloque de contexto.
+    Si no hay número de página, se omite.
     """
     lines = []
     for r in results.get("results", []):
-        tag = f"[{r['source']} p.{r['page']} c.{r['chunk']}]"
+        tag = f"[{r['source']}"
+        if r.get("page") is not None:
+            tag += f" p.{r['page']}"
+        if r.get("chunk") is not None:
+            tag += f" c.{r['chunk']}"
+        tag += "]"
         lines.append(f"{tag} {r['text']}")
     return "\n\n".join(lines)
 
